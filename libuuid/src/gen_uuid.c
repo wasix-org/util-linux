@@ -140,7 +140,7 @@ static int gettimeofday_fixed(struct timeval *tv, void *tz __attribute__((unused
  */
 static int get_node_id(unsigned char *node_id)
 {
-#ifdef HAVE_NET_IF_H
+#if defined(HAVE_NET_IF_H) && !defined(__wasm32)
 	int		sd;
 	struct ifreq	ifr, *ifrp;
 	struct ifconf	ifc;
