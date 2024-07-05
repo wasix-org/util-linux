@@ -140,7 +140,7 @@ static int gettimeofday_fixed(struct timeval *tv, void *tz __attribute__((unused
  */
 static int get_node_id(unsigned char *node_id)
 {
-#ifdef HAVE_NET_IF_H
+#if defined(HAVE_NET_IF_H) && !defined(__wasm32)
 	int		sd;
 	struct ifreq	ifr, *ifrp;
 	struct ifconf	ifc;
@@ -267,6 +267,7 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 
 	if (state_fd >= 0) {
 		rewind(state_f);
+		#if !defined(__wasm32)
 		while (flock(state_fd, LOCK_EX) < 0) {
 			if ((errno == EAGAIN) || (errno == EINTR))
 				continue;
@@ -276,6 +277,7 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 			ret = -1;
 			break;
 		}
+		#endif
 	} else
 		ret = -1;
 
@@ -346,7 +348,9 @@ try_again:
 			      clock_seq, (long)last.tv_sec, (long)last.tv_usec, adjustment);
 		fflush(state_f);
 		rewind(state_f);
+		#if !defined(__wasm32)
 		flock(state_fd, LOCK_UN);
+		#endif
 	}
 
 	*clock_high = clock_reg >> 32;
