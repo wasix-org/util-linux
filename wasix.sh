@@ -59,6 +59,8 @@ export LIBS="\
 -lwasi-emulated-getpid
 "
 
+./autogen.sh
+
 ./configure --disable-all-programs --enable-libuuid --host=wasm32-wasi --enable-static --disable-shared
 
 make -j6 libuuid.la
